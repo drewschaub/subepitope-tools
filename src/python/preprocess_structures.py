@@ -515,22 +515,31 @@ def main():
         df_working.to_csv(Path(csv_path, '{}_polymer_entity_ANARCI.csv'.format(target)))       
 
         antigen_csv_filename = '{}_antigen_{}_PDBscrape.csv'.format(file_prefix,target)
-        h_chain_csv_filename = '{}_antigen_{}_PDBscrape.csv'.format(file_prefix,target)
-        l_chain_csv_filename = '{}_antigen_{}_PDBscrape.csv'.format(file_prefix,target)
+        h_chain_csv_filename = '{}_h_chain_{}_PDBscrape.csv'.format(file_prefix,target)
+        l_chain_csv_filename = '{}_l_chain_{}_PDBscrape.csv'.format(file_prefix,target)
+        antibody_csv_filename = '{}_antibody_{}_PDBscrape.csv'.format(file_prefix,target)
 
+        print('\n### Verifying heavy and light chain assignments using ANARCI')
         print('\n### Saving summary files for antigen, heavy chain and light chain as:')
         print('      - {}'.format(antigen_csv_filename))
         print('      - {}'.format(h_chain_csv_filename))
         print('      - {}'.format(l_chain_csv_filename))
-        print('\n    ANARCI was used to check if heavy or light chain')
+        print('      - {}'.format(antibody_csv_filename))
 
         df_antigen = df_working[df_working['peptide_label'] == 'fusion peptide']
         df_h_chain = df_working[df_working['is_heavy_ANARCI'] == True]
         df_l_chain = df_working[df_working['is_light_ANARCI'] == True]
+        df_antibodies = df_h_chain.append(df_l_chain)
 
         df_antigen.to_csv(Path(csv_path, antigen_csv_filename))
         df_h_chain.to_csv(Path(csv_path, h_chain_csv_filename))
         df_l_chain.to_csv(Path(csv_path, l_chain_csv_filename))
+        df_antibodies.to_csv(Path(csv_path, antibody_csv_filename))
+
+        print('\n### Heavy and light chain summary')
+        print('        {} unique light chains'.format(len(df_l_chain['pdbx_seq_one_letter_code'].unique().tolist())))
+        print('        {} unique heavy chains'.format(len(df_h_chain['pdbx_seq_one_letter_code'].unique().tolist())))
+       
 
 if __name__ == "__main__":
     main()
