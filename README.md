@@ -10,8 +10,10 @@ This repository was setup to automate the analysis of structural information pre
 
 ### General Guidelines
 1. Determine how to define your antigen of interest. For example, it could be a uniprot ID or sequence. Please follow the [RCSB PDB Search API](https://search.rcsb.org) guidelines on how to define your antigen definition and search. 
-2. Place all ```cif``` files in ```data/[antigen]/cif```
-3. Run the ```preprocess_structures.py``` python script to pull json metadata for those cif files from RCSB PDB, and sequence information from ANARCI. In addition, ```csv``` files are generating which summarize antibody and antigen details. The file ```[antigen]_polymer_entity_ANARCI.csv``` is an output file that will be generated that summarizes all compiled data into a single source. 
+    1. Place all ```cif``` files in ```data/[antigen]/cif```
+    2. Run the ```preprocess_structures.py``` python script to pull json metadata for those cif files from RCSB PDB, and sequence information from ANARCI. In addition, ```csv``` files are generating which summarize antibody and antigen details. The file ```[file_prefix]_[antigen]_structure_dataset.csv``` is an output file that will be generated that summarizes all compiled data into a single source. 
+2. ```generate_renumber_schemes.py``` will generate CSV files for each heavy and light chain structure file with kabat and imgt numbering schemes which will be used to generate renumbered PDB files
+
 
 ### Usage as a Library
 
