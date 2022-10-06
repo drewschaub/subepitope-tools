@@ -541,7 +541,35 @@ def main():
         print('\n### Heavy and light chain summary')
         print('        {} unique light chains'.format(len(df_l_chain['pdbx_seq_one_letter_code'].unique().tolist())))
         print('        {} unique heavy chains'.format(len(df_h_chain['pdbx_seq_one_letter_code'].unique().tolist())))
-       
+
+    df_working = df_working.sort_values(by=['peptide_label', 'antibody_label', 'PDB']).reset_index(drop=True)
+    df_working.to_csv(Path(csv_path, '{}_{}_structure_dataset_csv'.format(file_prefix, target)))
+
+    # create an dataframe that will be used to generate file stems with antibody label, peptide label, PDB id, chain id
+    df_pdb_assignments = pd.DataFrame(columns = ['antibody_label', 'peptide_label', 'pdb', 'chain', 'file_prefix'])
+
+    for index, row in df_working.iterrows():
+        antibody_label = row['antibody_label']
+        peptide_label = row['peptide_label']
+        pdb = row['PDB']
+        
+        temp_list = row['pdbx_strand_id'].split(',')
+        chain_list = []
+        for chain in temp_list:
+            chain_list.append(chain[0])
+            if len(chain) > 1:
+                print('WARNING: Chain {} is more than one character in PDB: {}. Not allowed in PDB, but allowed in CIF. PDB may not exist on RCSB PDB'.format(chain, pdb))
+        
+        for chain in chain_list:
+            file_prefix = "{}_{}_{}_{}".format(antibody_label, peptide_label, pdb, chain)
+            polymer_entity_dict = {'antibody_label' : antibody_label, 'peptide_label' : peptide_label, 'pdb' : pdb,'chain' : chain, 'file_prefix' : file_prefix}
+            df_pdb_assignments = df_pdb_assignments.append(polymer_entity_dict, ignore_index=True)
+
+    pdb_assignment_filename = "PDB_chain_peptide-label_antibody-label_file-prefix.csv"
+    print('\n### Generating csv file that will contain file naming structure')
+    print('      PDB id, chain id, peptide label, antibody label, file prefix')
+    print('      {}'.format(pdb_assignment_filename))
+    df_pdb_assignments.to_csv(Path(csv_path, pdb_assignment_filename))
 
 if __name__ == "__main__":
     main()
