@@ -542,8 +542,9 @@ def main():
         print('        {} unique light chains'.format(len(df_l_chain['pdbx_seq_one_letter_code'].unique().tolist())))
         print('        {} unique heavy chains'.format(len(df_h_chain['pdbx_seq_one_letter_code'].unique().tolist())))
 
+    final_structure_summary_csvfile = '{}_{}_structure_summary.csv'.format(file_prefix, target)
     df_working = df_working.sort_values(by=['peptide_label', 'antibody_label', 'PDB']).reset_index(drop=True)
-    df_working.to_csv(Path(csv_path, '{}_{}_structure_dataset_csv'.format(file_prefix, target)))
+    df_working.to_csv(Path(csv_path, final_structure_summary_csvfile))
 
     # create an dataframe that will be used to generate file stems with antibody label, peptide label, PDB id, chain id
     df_pdb_assignments = pd.DataFrame(columns = ['antibody_label', 'peptide_label', 'pdb', 'chain', 'file_prefix'])
@@ -570,6 +571,11 @@ def main():
     print('      PDB id, chain id, peptide label, antibody label, file prefix')
     print('      {}'.format(pdb_assignment_filename))
     df_pdb_assignments.to_csv(Path(csv_path, pdb_assignment_filename))
+
+    print('\n### Double Check Structure Summary File')
+    print('')
+    print('        {}'.format(final_structure_summary_csvfile))
+
 
 if __name__ == "__main__":
     main()
